@@ -130,31 +130,27 @@ void ts4(struct data* data) {
 unsigned char get_byte(int id)
 {
 
-    struct data* data = malloc(sizeof(struct data));
-    data->id = id;
+    struct data d;
+    d.id = id;
 
     pthread_t t1;
-    pthread_create(&t1, NULL, (void*(*)(void*)) ts1, data);
+    pthread_create(&t1, NULL, (void*(*)(void*)) ts1, &d);
 
     pthread_t t2;
-    pthread_create(&t2, NULL, (void*(*)(void*)) ts2, data);
+    pthread_create(&t2, NULL, (void*(*)(void*)) ts2, &d);
 
     pthread_t t3;
-    pthread_create(&t3, NULL, (void*(*)(void*)) ts3, data);
+    pthread_create(&t3, NULL, (void*(*)(void*)) ts3, &d);
 
     pthread_t t4;
-    pthread_create(&t4, NULL, (void*(*)(void*)) ts4, data);
+    pthread_create(&t4, NULL, (void*(*)(void*)) ts4, &d);
 
-    void* tmp;
-    pthread_join(t1, &tmp);
+    pthread_join(t1, NULL);
+    pthread_join(t2, NULL);
+    pthread_join(t3, NULL);
+    pthread_join(t4, NULL);
 
-    pthread_join(t2, &tmp);
-
-    pthread_join(t3, &tmp);
-
-    pthread_join(t4, &tmp);
-
-    double pid = 4. * data->s1 - 2. * data->s2 - data->s3 - data->s4;
+    double pid = 4. * d.s1 - 2. * d.s2 - d.s3 - d.s4;
     pid = pid - (int) pid + 1.;
 
     double y = fabs(pid);
@@ -162,7 +158,7 @@ unsigned char get_byte(int id)
     unsigned char first = y;
     y = 16. * (y - floor (y));
     unsigned char second = y;
-    free(data);
+    
     return (first << 4) | second;
 }
 
